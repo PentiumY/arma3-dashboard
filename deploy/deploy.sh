@@ -62,10 +62,13 @@ setup_systemd_service() {
     SERVICE_NAME=$1
     SERVICE_DESC=$2
     SERVICE_CMD=$3
+    SERVICE_PATH=$4
 
     SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME"
 
     echo "Creating/updating systemd service: $SERVICE_NAME"
+
+    WORKDIR=${SERVICE_PATH:-$APP_PATH}
 
     # Create or replace the systemd service file
     sudo bash -c "cat > $SERVICE_FILE" <<EOL
@@ -75,7 +78,7 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=$APP_PATH
+WorkingDirectory=$WORKDIR
 ExecStart=$SERVICE_CMD
 Restart=always
 RestartSec=5
@@ -109,6 +112,6 @@ build_frontend
 setup_systemd_service "$BACKEND_SERVICE" "Arma3 Dashboard Backend" "$APP_PATH/backend/venv/bin/python -m uvicorn backend.app:app --host 0.0.0.0 --port 8000"
 
 # Frontend service (SSR via Node)
-setup_systemd_service "$FRONTEND_SERVICE" "Arma3 Dashboard Frontend" "/usr/bin/node $APP_PATH/frontend/.svelte-kit/adapter-node/server/index.js"
+setup_systemd_service "$FRONTEND_SERVICE" "Arma3 Dashboard Frontend" "/usr/bin/node build" "$APP_PATH/frontend"
 
 echo "Deployment complete. Services are running."
