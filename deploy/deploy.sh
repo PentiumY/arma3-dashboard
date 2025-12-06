@@ -109,6 +109,6 @@ build_frontend
 setup_systemd_service "$BACKEND_SERVICE" "Arma3 Dashboard Backend" "$APP_PATH/backend/venv/bin/python -m uvicorn backend.app:app --host 0.0.0.0 --port 8000"
 
 # Frontend service (SSR via Node)
-setup_systemd_service "$FRONTEND_SERVICE" "Arma3 Dashboard Frontend" "node $APP_PATH/frontend/.svelte-kit/node/server/index.js"
+setup_systemd_service "$FRONTEND_SERVICE" "Arma3 Dashboard Frontend" "/usr/bin/node $APP_PATH/frontend/.svelte-kit/adapter-node/server/index.js"
 
 echo "Deployment complete. Services are running."
