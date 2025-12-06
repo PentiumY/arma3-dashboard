@@ -42,17 +42,19 @@ build_frontend() {
     echo "Building frontend..."
     cd "$APP_PATH/frontend"
 
-    # Install adapter-static
-    sudo -u $USER npm install -D @sveltejs/adapter-static
+    # Install Node dependencies as the user
+    sudo -u $USER npm install
 
-    # Patch svelte.config.js to use adapter-static
+    # Ensure adapter-node is installed
+    sudo -u $USER npm install -D @sveltejs/adapter-node
+
+    # Patch svelte.config.js to use adapter-node
     CONFIG_FILE="$APP_PATH/frontend/svelte.config.js"
     if grep -q "@sveltejs/adapter-auto" "$CONFIG_FILE"; then
-      sed -i 's/@sveltejs\/adapter-auto/@sveltejs\/adapter-static/' "$CONFIG_FILE"
+        sed -i 's/@sveltejs\/adapter-auto/@sveltejs\/adapter-node/' "$CONFIG_FILE"
     fi
 
-    # Install node modules and build
-    sudo -u $USER npm install
+    # Build frontend (SSR)
     sudo -u $USER npm run build
 }
 
@@ -106,7 +108,7 @@ build_frontend
 # Backend service
 setup_systemd_service "$BACKEND_SERVICE" "Arma3 Dashboard Backend" "$APP_PATH/backend/venv/bin/python -m uvicorn backend.app:app --host 0.0.0.0 --port 8000"
 
-# Frontend service (simple static server)
-setup_systemd_service "$FRONTEND_SERVICE" "Arma3 Dashboard Frontend" "npx serve -s $APP_PATH/frontend/build -l 3000"
+# Frontend service (SSR via Node)
+setup_systemd_service "$FRONTEND_SERVICE" "Arma3 Dashboard Frontend" "node $APP_PATH/frontend/.svelte-kit/node/server/index.js"
 
 echo "Deployment complete. Services are running."
