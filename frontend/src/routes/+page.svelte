@@ -1,2 +1,6 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+  import ServerStats from '$lib/components/ServerStats.svelte';
+</script>
+
+<h1 class="text-2xl font-bold p-4">Arma 3 Server Dashboard</h1>
+<ServerStats />
