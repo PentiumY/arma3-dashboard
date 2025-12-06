@@ -93,7 +93,7 @@ build_frontend
 
 # 4. Setup systemd services
 # Backend service
-setup_systemd_service "$BACKEND_SERVICE" "Arma3 Dashboard Backend" "$APP_PATH/backend/venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000"
+setup_systemd_service "$BACKEND_SERVICE" "Arma3 Dashboard Backend" "$APP_PATH/backend/venv/bin/python -m uvicorn backend.app:app --host 0.0.0.0 --port 8000"
 
 # Frontend service (simple static server)
 setup_systemd_service "$FRONTEND_SERVICE" "Arma3 Dashboard Frontend" "npx serve -s $APP_PATH/frontend/build -l 3000"
