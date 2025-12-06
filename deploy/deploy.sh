@@ -41,8 +41,19 @@ setup_backend() {
 build_frontend() {
     echo "Building frontend..."
     cd "$APP_PATH/frontend"
-    npm install
-    npm run build  # assumes your svelte config builds to 'public' or 'build'
+
+    # Install adapter-static
+    sudo -u $USER npm install -D @sveltejs/adapter-static
+
+    # Patch svelte.config.js to use adapter-static
+    CONFIG_FILE="$APP_PATH/frontend/svelte.config.js"
+    if grep -q "@sveltejs/adapter-auto" "$CONFIG_FILE"; then
+      sed -i 's/@sveltejs\/adapter-auto/@sveltejs\/adapter-static/' "$CONFIG_FILE"
+    fi
+
+    # Install node modules and build
+    sudo -u $USER npm install
+    sudo -u $USER npm run build
 }
 
 setup_systemd_service() {
