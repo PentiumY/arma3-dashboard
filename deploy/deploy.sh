@@ -114,4 +114,6 @@ setup_systemd_service "$BACKEND_SERVICE" "Arma3 Dashboard Backend" "$APP_PATH/ba
 # Frontend service (SSR via Node)
 setup_systemd_service "$FRONTEND_SERVICE" "Arma3 Dashboard Frontend" "/usr/bin/node build" "$APP_PATH/frontend"
 
+$APP_PATH/backend/venv/bin/python $APP_PATH/backend/test.py
+
 echo "Deployment complete. Services are running."
