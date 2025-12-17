@@ -1,10 +1,12 @@
 <script>
   import { onMount } from 'svelte';
-    import Header from '$lib/components/Header.svelte';
+  import Header from '$lib/components/Header.svelte';
+  import api from '$lib/api';
   let cpu = 0;
   let memory = 0;
   let serverRunning = false;
-
+  let currentPreset = ""
+  
   async function fetchStats() {
     const res = await fetch('/api/stats');
     const data = await res.json();
@@ -18,9 +20,12 @@
     await fetchStats();
   }
 
-  onMount(() => {
-    fetchStats();
-    const interval = setInterval(fetchStats, 3000);
+  onMount(async () => {
+    //fetchStats();
+    //const interval = setInterval(fetchStats, 3000);
+
+    currentPreset = await api.get('current')
+
     return () => clearInterval(interval);
   });
 </script>
@@ -48,20 +53,8 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-      <div class="bg-gray-50 p-6 rounded-xl shadow flex flex-col items-center">
-        <h2 class="text-xl font-semibold mb-4">CPU Load</h2>
-        <div class="w-40 h-40 rounded-full border-8 border-gray-300 relative">
-          <div class="absolute inset-0 flex items-center justify-center text-2xl font-bold">{cpu}%</div>
-          <div class="absolute inset-0 rounded-full border-8 border-green-500" style="clip-path: polygon(50% 0%, 100% 100%, 0% 100%);"></div>
-        </div>
-      </div>
-
-      <div class="bg-gray-50 p-6 rounded-xl shadow flex flex-col items-center">
-        <h2 class="text-xl font-semibold mb-4">Memory Usage</h2>
-        <div class="w-40 h-40 rounded-full border-8 border-gray-300 relative">
-          <div class="absolute inset-0 flex items-center justify-center text-2xl font-bold">{memory}%</div>
-          <div class="absolute inset-0 rounded-full border-8 border-blue-500" style="clip-path: polygon(50% 0%, 100% 100%, 0% 100%);"></div>
-        </div>
+      <div>
+        <p>Current preset: {currentPreset}</p>
       </div>
     </div>
   </div>

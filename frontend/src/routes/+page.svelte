@@ -1,6 +1,17 @@
 <script>
-  import ServerStats from '$lib/components/ServerStats.svelte';
+  import Header from '$lib/components/Header.svelte';
+  let bgUrl = '/background.png';
 </script>
 
-<h1 class="text-2xl font-bold p-4">Arma 3 Server Dashboard</h1>
-<ServerStats />
+<Header current="" />
+
+<div class="bg-gray-800 w-full min-h-screen">
+  <div class="relative w-full h-96 bg-cover bg-center" style="background-image: url({bgUrl})">
+    <h1 class="text-white text-3xl p-6 relative z-10">1988</h1>
+
+    <!-- Fade overlay -->
+    <div class="absolute bottom-0 left-0 w-full h-32 bg-linear-to-t from-gray-800 to-transparent z-20"></div>
+  </div>
+</div>
+
+

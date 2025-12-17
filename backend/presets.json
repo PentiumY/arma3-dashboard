@@ -1,0 +1,145 @@
+{
+    "vanilla": {
+        "hostname": "Vanilla Server",
+        "password": "",
+        "passwordAdmin": "admin123",
+        "maxPlayers": 60,
+        "persistent": true,
+        "battleye": true,
+        "verifySignatures": "0",
+        "motd": [
+            "Welcome to the server",
+            "No cheating",
+            "Have fun"
+        ],
+        "modlist": [
+            "CBA_A3",
+            "Speshal Core",
+            "ace",
+            "RHSUSAF",
+            "RHSAFRF",
+            "Enhanced Movement",
+            "Enhanced Soundscape",
+            "SFP: Swedish Forces Pack",
+            "WBK Simple Blood",
+            "Archie, Summer",
+            "Cinematic Lens Flare",
+            "CUP Terrains - Core",
+            "CUP Terrains - Maps",
+            "CUP Terrains - Maps 2.0",
+            "Interiors for CUP",
+            "LAMBS_RPG",
+            "LAMBS_Suppression",
+            "LAMBS_Turrets",
+            "ACE3 Arsenal Extended - Core",
+            "RHSGREF",
+            "SFX - F Squadron SOG",
+            "SOG IE1",
+            "RHS Renewal Core",
+            "Modular Handgun System (Sig M17 & M18)",
+            "W28",
+            "@Improved Game Sounds - 3CB Compatibility",
+            "Improved Game Sounds - RHS Compatibility",
+            "RHSSAF",
+            "ITN - Illuminate The Night",
+            "RKSL Studios - Attachments v3.02",
+            "120-PM-43",
+            "AI Paths",
+            "tbd_mortars",
+            "Modular Shoothouse Parts",
+            "Tier One Weapons",
+            "RHSTERRACORE",
+            "O&T Expansion Eden",
+            "WBK Immersive Animations",
+            "Zeus Enhanced",
+            "Animate - Radio",
+            "Animate - Rewrite",
+            "Animated Recoil coefficient changer",
+            "Blastcore Murr Edition",
+            "Death and Hit reactions",
+            "Enhanced Movement Rework",
+            "Hide Among The Grass - HATG",
+            "Improved Game Sounds",
+            "LAMBS_Danger.fsm",
+            "Project SFX: Footsteps",
+            "Project SFX: Remastered",
+            "SFP: JSRS Sounds",
+            "SFP: ACE Compatibility",
+            "ACE3 Arsenal Extended - RHS All-in-One",
+            "LR Modern Armed Forces of Russian Federation Full",
+            "Modern Combat Carbines (All-in-One)",
+            "RHS US Army Renewal",
+            "RHSAFRF Armor Nerf",
+            "RHSUSAF Armor Nerf",
+            "3CB Factions",
+            "ITN Compat T1",
+            "ITN Compat RHS All-in-One",
+            "3CB BAF Weapons",
+            "3CB BAF Equipment",
+            "Breach - Rewrite",
+            "M119A3",
+            "Melee - Rewrite",
+            "Modern Sniper Systems (All-in-One)",
+            "TBD Mortars - Compatibility AiO",
+            "Tier One Weapons SAW fix"
+        ]
+    },
+    "test2": {
+        "hostname": "Hardcore2",
+        "password": "playhard",
+        "passwordAdmin": "root",
+        "maxPlayers": 40,
+        "persistent": true,
+        "battleye": true,
+        "verifySignatures": "2",
+        "motd": [
+            "Testing is so fun, we love it",
+            "Nice nice"
+        ],
+        "modlist": []
+    },
+    "Test3": {
+        "hostname": "Hardcore Server2",
+        "password": "playhard",
+        "passwordAdmin": "root",
+        "maxPlayers": 40,
+        "persistent": true,
+        "battleye": true,
+        "verifySignatures": "3",
+        "motd": [
+            ""
+        ],
+        "modlist": [
+            "ace",
+            "cats"
+        ]
+    },
+    "ModernPreset": {
+        "hostname": "Arma",
+        "password": "123",
+        "passwordAdmin": "Admin123",
+        "maxPlayers": 16,
+        "persistent": false,
+        "battleye": true,
+        "verifySignatures": "0",
+        "motd": [
+            "Hello!"
+        ],
+        "modlist": [
+            "ace"
+        ]
+    },
+    "ModernPreset2": {
+        "hostname": "Arma",
+        "password": "123",
+        "passwordAdmin": "Admin123",
+        "maxPlayers": 16,
+        "persistent": false,
+        "battleye": true,
+        "verifySignatures": "0",
+        "motd": [
+            "Hello!"
+        ],
+        "modlist": []
+    }
+}

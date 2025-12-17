@@ -2,32 +2,23 @@
   import { onMount } from 'svelte';
   import Fuse from 'fuse.js';
   import Header from '$lib/components/Header.svelte';
+  import api from '$lib/api';
 
   let mods = [];
   let searchQuery = '';
   let sortedBy = 'name';
   let selectedModlistFile;
   let presetTab = 'list';
-    
+  let selectedPreset = "test"
+
   let modPresets = [];
   let selectedMods = []; // Array of currently selected mod names
 
-  onMount(() => {
-    // Sample mod data
-    mods = [
-      { name: 'CBA_A3', filesize: 12.5 },
-      { name: 'ACE3', filesize: 105.3 },
-      { name: 'RHS_USF', filesize: 820.7 },
-      { name: 'RHS_GREF', filesize: 1024 },
-      { name: 'TaskForceRadio', filesize: 48.9 }
-    ];
-
-    // Sample preset data
-    modPresets = [
-      { name: 'Vanilla' },
-      { name: 'RHS + ACE' },
-      { name: 'Custom Taskforce' }
-    ];
+  onMount(async () => {
+    selectedPreset = await api.get('current');
+    mods = await api.get('allMods');
+    modPresets = await api.get('presets');
+    selectedMods = await api.get(`presets/${selectedPreset}/modlist`);
   });
 
   $: fuse = new Fuse(mods, { keys: ['name'], threshold: 0.4 });
@@ -51,29 +42,29 @@
     const formData = new FormData();
     formData.append('file', selectedModlistFile); // matches FastAPI param "file"
 
-    const res = await fetch('http://127.0.0.1:8000/upload', {
-        method: 'POST',
-        body: formData
-    });
+    const data = await api.post('upload', formData, true)
 
-    const data = await res.json();
-
-    if (data.status === 'ok' && data.mods) {
+    if (data.modlist) {
         // Set selectedMods to only the names returned from backend
-        selectedMods = data.mods.map(mod => mod.name);
+        console.log(data.modlist);
+        selectedMods = data.modlist
+        //selectedMods = data.mods.map(mod => mod.name);
     }
+  }
 
-    alert(`Modlist processed. ${data.modCount} mods found and selected.`);
-    }
-
+  async function selectModPreset(preset) {
+    presetTab = "list"
+    selectedPreset = preset
+    selectedMods = await api.get(`presets/${selectedPreset}/modlist`);
+    await api.post('setCurrent', { name: selectedPreset });
+  }
 
   async function saveSelectedMods() {
     // Send currently selected mods to backend
-    await fetch('/api/set-selected-mods', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mods: selectedMods })
-    });
+    await api.post(`presets/${selectedPreset}/modlist`, {
+      modlist: selectedMods
+    })
+
     alert('Selected mods saved.');
   }
 </script>
@@ -89,6 +80,10 @@
       <button class="px-4 py-2 rounded bg-gray-800 text-white" on:click={() => presetTab = 'presets'}>Modlist Presets</button>
     </div>
 
+    <div class="flex space-x-4 mb-6">
+      <p>Current Preset: {selectedPreset}</p>
+    </div>
+
     {#if presetTab === 'list'}
       <div class="mb-4 flex space-x-4">
         <input type="text" placeholder="Search mods..." bind:value={searchQuery} class="border rounded p-2 w-full" />
@@ -97,7 +92,7 @@
           <option value="filesize">Sort by File Size</option>
         </select>
       </div>
-
+      
       <table class="w-full text-left border-collapse">
         <thead>
           <tr class="border-b">
@@ -122,8 +117,20 @@
       <div class="mt-6 flex flex-col space-y-4">
         <label class="block font-semibold">Upload Modlist</label>
         <input type="file" accept=".html" on:change="{e => selectedModlistFile = e.target.files[0]}" />
-        <button on:click={uploadModlist} class="px-4 py-2 bg-green-600 text-white rounded">Upload & Apply</button>
-        <button on:click={saveSelectedMods} class="px-4 py-2 bg-blue-600 text-white rounded">Save Selected Mods</button>
+        
+        <button 
+            on:click={uploadModlist} 
+            class="px-4 py-2 rounded text-white"
+            class:bg-green-600={selectedModlistFile} 
+            class:hover:bg-green-700={selectedModlistFile} 
+            class:bg-gray-400={!selectedModlistFile}   
+            disabled={!selectedModlistFile} >
+            Upload & Apply
+        </button>
+        
+        <button on:click={saveSelectedMods} class="px-4 py-2 bg-blue-600 text-white rounded">
+            Save Selected Mods
+        </button>
       </div>
     {/if}
 
@@ -132,7 +139,9 @@
         <h2 class="text-xl font-semibold mb-4">Local Modlist Presets</h2>
         <ul class="space-y-2">
           {#each modPresets as preset}
-            <li class="p-4 border rounded hover:bg-gray-50 cursor-pointer">{preset.name}</li>
+              <!-- svelte-ignore a11y_click_events_have_key_events -->
+              <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+              <li on:click={() => selectModPreset(preset)}  class="p-4 border rounded hover:bg-gray-50 cursor-pointer">{preset}</li>
           {/each}
         </ul>
       </div>

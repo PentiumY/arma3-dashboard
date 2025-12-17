@@ -11,6 +11,39 @@ load_dotenv()
 
 STEAM_USER = os.getenv("STEAM_USER")
 STEAM_PASS = os.getenv("STEAM_PASS")
+CURRENT_FILE = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "modsManifest.json"
+)
+
+SERVER_PATH = os.path.join("/home/arma/arma3server")
+
+def find_mod_dirs():
+    """
+    Scan `base_dir` for subdirectories that contain both 'mod.cpp' and 'meta.cpp'.
+    
+    Args:
+        base_dir (str): The path to scan.
+    
+    Returns:
+        List[str]: List of subdirectory names that meet the criteria.
+    """
+    valid_dirs = []
+
+    # Iterate over all entries in base_dir
+    for entry in os.listdir(SERVER_PATH):
+        full_path = os.path.join(SERVER_PATH, entry)
+
+        # Check if it is a directory
+        if os.path.isdir(full_path):
+            # Check if both mod.cpp and meta.cpp exist in the directory
+            mod_file = os.path.join(full_path, "mod.cpp")
+            meta_file = os.path.join(full_path, "meta.cpp")
+            if os.path.isfile(mod_file) and os.path.isfile(meta_file):
+                valid_dirs.append(entry)  # store just the directory name
+
+    return valid_dirs
 
 def get_workshop_mod_name(workshop_id: int) -> str:
     """
@@ -80,15 +113,13 @@ def download_workshop_mod(
         shutil.rmtree(dest)
     shutil.copytree(src, dest)
 
+
+
     print(f"Copied Workshop mod '{mod_name}' to server folder: {dest}")
     return dest
 
 
 # Optional: allow running as a script
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) < 2:
-        print("Usage: python steam_mod_downloader.py <workshop_id>")
-    else:
-        workshop_id = int(sys.argv[1])
-        download_workshop_mod(workshop_id)
+    mods = find_mod_dirs()
+    print(mods)

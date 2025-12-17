@@ -2,10 +2,13 @@
   import { onMount } from 'svelte';
 
   import Header from '$lib/components/Header.svelte';
+  import { fly } from 'svelte/transition';
+  import api from '$lib/api';
 
   let presets = [];
   let selectedPreset = '';
   let hostname = '';
+  let presetName = '';
   let password = '';
   let adminPassword = '';
   let maxPlayers = 40;
@@ -13,15 +16,23 @@
   let battleye = true;
   let verifySignatures = 2;
   let motd = '';
+  let showModal = false;
 
   onMount(async () => {
-    const res = await fetch('/api/presets');
-    presets = await res.json();
+    presets = await api.get('presets');
+    
+    selectedPreset = await api.get('current');
+
+    console.log(selectedPreset)
+    console.log(presets);
+
+    loadPreset()
   });
 
   async function loadPreset() {
-    const res = await fetch(`/api/preset/${selectedPreset}`);
-    const data = await res.json();
+    presetName = selectedPreset
+
+    const data = await api.get(`presets/${selectedPreset}`);
 
     hostname = data.hostname;
     password = data.password;
@@ -31,24 +42,28 @@
     battleye = data.battleye;
     verifySignatures = data.verifySignatures;
     motd = data.motd?.join("\n") ?? '';
+
+    await api.post('setCurrent', { name: selectedPreset });
   }
 
   async function saveSettings() {
-    await fetch('/api/save', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        hostname,
-        password,
-        passwordAdmin: adminPassword,
-        maxPlayers,
-        persistent,
-        battleye,
-        verifySignatures,
-        motd: motd.split("\n")
-      })
-    });
+    await api.post('save', {
+        name: presetName,
+        data: {
+            hostname,
+            password,
+            passwordAdmin: adminPassword,
+            maxPlayers,
+            persistent,
+            battleye,
+            verifySignatures,
+            motd: motd.split("\n")
+          }
+        });
+
+    showModal = true;
   }
+  
 </script>
 
 <Header current="/config" />
@@ -118,10 +133,28 @@
         <a href="/missions" class="px-4 py-2 rounded bg-blue-500 text-white">Manage Missions</a>
       </div>
 
-      <button on:click={saveSettings} class="w-full py-3 bg-green-600 text-white rounded mt-6 text-lg font-semibold">
+      <div>
+        <label class="font-semibold">Preset Save Name</label>
+        <input bind:value={presetName} class="mt-1 w-full border rounded p-2" />
+      </div>
+
+      <button on:click={saveSettings} class="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded mt-6 text-lg font-semibold">
         Save Settings
       </button>
     </div>
   </div>
 </div>
 
+{#if showModal}
+  <div class="fixed inset-0 flex items-center justify-center bg-opacity-50 backdrop-blur-xs z-50">
+    <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full text-center" transition:fly="{{ y: -50, duration: 400 }}">
+      <h2 class="text-xl font-semibold mb-4">Settings Saved!</h2>
+      <p>Your server settings have been successfully saved.</p>
+      <button
+        on:click={() => showModal = false} 
+        class="mt-6 px-4 py-2 bg-green-600 hover:bg-green-700  text-white rounded">
+        Close
+      </button>
+    </div>
+  </div>
+{/if}
